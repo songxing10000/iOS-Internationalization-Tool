@@ -276,6 +276,46 @@ function DOMtoString(document_root) {
         let title = titleElement.innerText
         titleElement.innerText = title + ' 发布日期：' + dateElement.innerText
     }
+    else if (loadUrl.includes('kancloud.cn')) {
+        // 看云接口
+        let apiStrs = document.getElementsByClassName('article-body kancloud-markdown-body')[0].innerText.split('\n')
+        let apiDes = apiStrs[0]
+        let apiMethod = apiStrs[1]
+        let apiUrl = apiStrs[2]
+        if(apiUrl === " 调试") {
+            // 没有标题下的接口说明
+            apiDes = document.getElementsByClassName('article-head')[0].innerText
+            apiMethod = apiStrs[0]
+            apiUrl = apiStrs[1]
+        }
+        // 请示参数
+        let paramView = document.getElementsByClassName('ಠapi-body')[0]
+        let paramStr = ''
+        if (typeof(paramView) != "undefined") {
+            let strs = paramView.innerText.split('	')
+            strs.forEach(function(obj, index)  {
+                if (index % 2 == 0 && obj.length > 0) {
+                    // 参数字符串
+                    // 移除所有换行 .replace(/[\n]/ig,'')
+                    paramStr += 'dict[@\"' + obj.replace('\nstring','').replace(/[\n]/ig,'') + '\"] = @\"\";\n'
+                }
+            });
+        }
+        let dictValue = 'nil'
+        if (paramStr.length > 0) {
+            paramStr = 'NSMutableDictionary *dict = @{}.mutableCopy;\n'+paramStr
+            dictValue = 'dict'
+        }
+        let methodStr = apiMethod === 'GET' ? 'get' : 'post'
+        return `${paramStr}
+        // ${apiDes}
+        [[CKKNetManager manager] ${methodStr}:@"${apiUrl}" params:${dictValue} HUDString:@"加载中..." success:^(id  _Nullable responseObject) {
+            NSLog(@"---%@---",responseObject);
+        } failure:^(NSString * _Nullable errorString) {
+            NSLog(@"---%@---",errorString);
+        }];
+        `
+    }
     else {
         // https://www.showdoc.cc/mingmiao?page_id=4089639825709213
         let returnStr = '';
