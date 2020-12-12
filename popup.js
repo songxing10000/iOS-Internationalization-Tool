@@ -23,7 +23,7 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
         message.innerText = str;
       }
       else if (op === 'oc_code' || op === 'swift_code') {
-        alert('f')
+
         if (btn.checked) {
           let str2 = '';
           for (const [key, value] of Object.entries(request.source)) {
@@ -40,14 +40,14 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
           showLine
         }
         else if (showLine.checked) {
-          alert('f')
+
           let str2 = '';
           for (const [key, value] of Object.entries(request.source)) {
             str2 += translate(key, value.replace(',', ''), 'label', (op === 'swift_code')) + '\n';
           }
           message.innerText = str2;
         } else {
-          alert('f')
+
         }
       }
       else {

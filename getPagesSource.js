@@ -291,29 +291,44 @@ function DOMtoString(document_root) {
         // 请示参数
         let paramView = document.getElementsByClassName('ಠapi-body')[0]
         let paramStr = ''
+        let paramDesStr = ''
+        let paramMethodStr = ''
+
         if (typeof(paramView) != "undefined") {
             let strs = paramView.innerText.split('	')
             strs.forEach(function(obj, index)  {
                 if (index % 2 == 0 && obj.length > 0) {
                     // 参数字符串
                     // 移除所有换行 .replace(/[\n]/ig,'')
-                    paramStr += 'dict[@\"' + obj.replace('\nstring','').replace(/[\n]/ig,'') + '\"] = @\"\";\n'
+                    let rightVar = obj.replace('\nstring','').replace(/[\n]/ig,'')
+                    paramStr += 'dict[varNameToStr(' + rightVar + ')] = ' + rightVar + ';\n'
+                    paramDesStr += '\n/// @param ' + obj.replace('\nstring','').replace(/[\n]/ig,'')
+                    paramMethodStr += rightVar + ':(NSString *)'+rightVar+'\n'
                 }
             });
         }
         let dictValue = 'nil'
         if (paramStr.length > 0) {
-            paramStr = 'NSMutableDictionary *dict = @{}.mutableCopy;\n'+paramStr
+            paramStr = '\nNSMutableDictionary *dict = [NSMutableDictionary dictionary];\n'+paramStr
             dictValue = 'dict'
         }
         let methodStr = apiMethod === 'GET' ? 'get' : 'post'
-        return `${paramStr}
-        // ${apiDes}
-        [[CKKNetManager manager] ${methodStr}:@"${apiUrl}" params:${dictValue} HUDString:@"加载中..." success:^(id  _Nullable responseObject) {
-            NSLog(@"---%@---",responseObject);
-        } failure:^(NSString * _Nullable errorString) {
-            NSLog(@"---%@---",errorString);
-        }];
+        // return `${paramStr}
+        // // ${apiDes}
+        // [[CKKNetManager manager] ${methodStr}:@"${apiUrl}" params:${dictValue} HUDString:@"加载中..." success:^(id  _Nullable responseObject) {
+        //     NSLog(@"---%@---",responseObject);
+        // } failure:^(NSString * _Nullable errorString) {
+        //     NSLog(@"---%@---",errorString);
+        //     [ASHUD showHudTipStr: errorString];
+        // }];
+        // `
+        return `/// ${apiDes}${paramDesStr}
+        - (void)createTheOrder${paramMethodStr}
+                                success:(requestSuccessBlock)success
+                              failure:(requestFailureBlock)failure  {
+                                ${paramStr}
+            [[CKKNetManager manager] ${methodStr}:@"${apiUrl}" params:${dictValue} HUDString:@"加载中..." success:success failure:failure];
+        }
         `
     }
     else {
