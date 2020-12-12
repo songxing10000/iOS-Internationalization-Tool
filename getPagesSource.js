@@ -300,10 +300,23 @@ function DOMtoString(document_root) {
                 if (index % 2 == 0 && obj.length > 0) {
                     // 参数字符串
                     // 移除所有换行 .replace(/[\n]/ig,'')
+                    
                     let rightVar = obj.replace('\nstring','').replace(/[\n]/ig,'')
-                    paramStr += 'dict[varNameToStr(' + rightVar + ')] = ' + rightVar + ';\n'
-                    paramDesStr += '\n/// @param ' + obj.replace('\nstring','').replace(/[\n]/ig,'')
-                    paramMethodStr += rightVar + ':(NSString *)'+rightVar+'\n'
+                    
+                    
+                    // 尾部 int 如 yidint
+                    let lastThreeStr = rightVar.substring(rightVar.length - 3)
+                    if(lastThreeStr === 'int') {
+                        rightVar = rightVar.replace('int', '')
+                        paramMethodStr += rightVar + ':(NSInteger)'+rightVar+'\n'
+                        paramStr += 'dict[varNameToStr(' + rightVar + ')] = @(' + rightVar + ');\n'
+                        paramDesStr += '\n/// @param ' + rightVar
+                    } else {
+                        paramMethodStr += rightVar + ':(NSString *)'+rightVar+'\n'
+                        paramStr += 'dict[varNameToStr(' + rightVar + ')] = ' + rightVar + ';\n'
+                        paramDesStr += '\n/// @param ' + rightVar
+                    }
+                    
                 }
             });
         }
