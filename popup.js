@@ -247,13 +247,13 @@ function translate(willTranslateStr, translatedStr, outTypeStr, isSwift) {
     return "/// " + willTranslateStr + "\n" + "NSString *" + translatedStr + "Str" + " = @\"" + willTranslateStr + "\";"
   } else if (outTypeStr === 'label') {
     return `/// ${willTranslateStr} 
-    @property (nonatomic, weak) UILabel *m_${translatedStr}Lab;
+    @property (nonatomic, strong) UILabel *m_${translatedStr}Lab;
     `
   } else if (outTypeStr === 'btn') {
     let controlName = upperCaseFirstLetter(translatedStr);
     if (!isSwift) {
       return `/// ${willTranslateStr}
-      @property (nonatomic, weak) UIButton *m_${translatedStr}Btn;
+      @property (nonatomic, strong) UIButton *m_${translatedStr}Btn;
 
         
       [self.m_${translatedStr}Btn addTarget:self action:@selector(on${controlName}BtnClick:) forControlEvents:UIControlEventTouchUpInside];
