@@ -256,7 +256,7 @@ function translate(willTranslateStr, translatedStr, outTypeStr, isSwift) {
       @property (nonatomic, strong) UIButton *m_${translatedStr}Btn;
 
         
-      [self.m_${translatedStr}Btn addTarget:self action:@selector(on${controlName}BtnClick:) forControlEvents:UIControlEventTouchUpInside];
+      [self.m_${translatedStr}Btn addTarget:self action:@selector(click${controlName}Btn:) forControlEvents:UIControlEventTouchUpInside];
       
       // MARK: - ${willTranslateStr} 按钮事件
       /// ${willTranslateStr} 按钮事件
