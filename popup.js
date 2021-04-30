@@ -248,6 +248,17 @@ function translate(willTranslateStr, translatedStr, outTypeStr, isSwift) {
   } else if (outTypeStr === 'label') {
     return `/// ${willTranslateStr} 
     @property (nonatomic, strong) UILabel *m_${translatedStr}Lab;
+    
+    -(UILabel *)m_${translatedStr}Lab {
+      if (!_m_${translatedStr}Lab) {
+          UILabel *lab = [UILabel new];
+        lab.text = @"0点限时买一送一！";
+        lab.font = [UIFont pFMediumSize: 16];
+        lab.textColor = @"#333333".hexColor;
+        _m_${translatedStr}Lab = lab;
+      }
+      return _m_${translatedStr}Lab;
+    }
     `
   } else if (outTypeStr === 'btn') {
     let controlName = upperCaseFirstLetter(translatedStr);
@@ -255,13 +266,22 @@ function translate(willTranslateStr, translatedStr, outTypeStr, isSwift) {
       return `/// ${willTranslateStr}
       @property (nonatomic, strong) UIButton *m_${translatedStr}Btn;
 
-        
-      [self.m_${translatedStr}Btn addTarget:self action:@selector(click${controlName}Btn:) forControlEvents:UIControlEventTouchUpInside];
+      -(UIButton *)m_${translatedStr}Btn {
+        if (!_m_${translatedStr}Btn) {
+    UIButton *btn = [UIButton buttonWithType: UIButtonTypeCustom];
+        [btn setTitle: @"观看直播" forState: UIControlStateNormal];
+        btn.titleLabel.font = [UIFont pFSize: 12];
+        UIColor *color = @"#9A2037".hexColor;
+        [btn setTitleColor:color  forState: UIControlStateNormal];
+        [btn addTarget:self action:@selector(click${controlName}Btn:) forControlEvents:UIControlEventTouchUpInside];
+        _m_${translatedStr}Btn = btn;
+        }
+        return _m_${translatedStr}Btn;
+    }
       
       // MARK: - ${willTranslateStr} 按钮事件
       /// ${willTranslateStr} 按钮事件
       - (void) click${controlName}Btn:(UIButton *)btn {
-        
 
       }`
     }
