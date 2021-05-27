@@ -11,7 +11,7 @@ let showLine = document.getElementById('show_line');
 chrome.runtime.onMessage.addListener(function (request, sender) {
   if (request.action == "getSource") {
 
-    if (url.includes('translate.google.cn') || url.includes('fanyi.youdao.com')) {
+    if (url.includes('translate.google.cn') || url.includes('fanyi.baidu.com')) {
       
       let op = document.getElementById('op').value;
       if (op === 'lang') {
