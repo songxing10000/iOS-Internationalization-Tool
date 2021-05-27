@@ -20,8 +20,7 @@ function lowerCaseFirstLetter(str) {
 function DOMtoString(document_root) {
     var loadUrl = document.URL;
     if (loadUrl.includes('translate.google.cn') ||
-        loadUrl.includes('fanyi.baidu.com') ||
-        loadUrl.includes('fanyi.youdao.com')) {
+        loadUrl.includes('fanyi.baidu.com')) {
         /// 考虑  's  Guarantor's vehicle information, guarantor's real estate information
         /// 谷歌翻译处理
         /// 待翻译的字符串
@@ -47,9 +46,7 @@ function DOMtoString(document_root) {
                     willTranslateStr += desStr + '\n';
                 }
             }
-        } else if (loadUrl.includes('fanyi.youdao.com')) {
-            willTranslateStr = document.getElementsByClassName('input__original__area')[0].innerHTML
-        }
+        } 
         /// 翻译后的字符串 ,如  Daily trend chart
         var translatedStr = ''
         if (loadUrl.includes('translate.google.cn')) {
@@ -73,9 +70,8 @@ function DOMtoString(document_root) {
                 }
             }
 
-        } else if (loadUrl.includes('fanyi.youdao.com')) {
-            translatedStr = document.getElementsByClassName('input__target__text')[0].innerText
         }
+        
         // return  willTranslateStr + '\n' +  translatedStr;
             // 多个单词 如，Daily trend chart, monthly trend chart
             let willTranslateArray = willTranslateStr.split("\n")
