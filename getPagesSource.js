@@ -28,7 +28,15 @@ function DOMtoString(document_root) {
         var willTranslateStr = '';
         if (loadUrl.includes('translate.google.cn')) {
             // 谷歌翻译
-            willTranslateStr = document.getElementsByClassName('text-dummy')[0].innerHTML
+            let desDiv = document.getElementsByClassName('text-dummy')
+            if (desDiv.length > 0) {
+                willTranslateStr = desDiv[0].innerHTML
+            } else {
+                willTranslateStr = document.getElementsByClassName('hlJJmd')[0].textContent
+            }
+           
+
+            
         } else if (loadUrl.includes('fanyi.baidu.com')) {
             // 百度翻译
             // document.getElementsByClassName('ordinary-output source-output')[1].innerText
@@ -46,7 +54,13 @@ function DOMtoString(document_root) {
         var translatedStr = ''
         if (loadUrl.includes('translate.google.cn')) {
             // 谷歌翻译
-            translatedStr = document.getElementsByClassName('tlid-translation translation')[0].innerText;
+            let desDiv = document.getElementsByClassName('tlid-translation translation')
+            if (desDiv.length > 0) {
+                translatedStr = desDiv[0].innerText
+            } else {
+                translatedStr = document.getElementsByTagName('span')[87].innerText
+            }
+
         } else if (loadUrl.includes('fanyi.baidu.com')) {
             // 百度翻译
             // document.getElementsByClassName('ordinary-output target-output clearfix')[1].innerText
