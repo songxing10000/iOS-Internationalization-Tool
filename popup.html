@@ -1,14 +1,39 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="utf-8"/>
+	<meta charset="utf-8" />
 	<style>
-	body{font-size: 16px;width: 400px; height: 300px;padding: 10px;font-family: 'Microsoft Yahei'; }
-	#status {color:red;}
+		body {
+			font-size: 16px;
+			width: 400px;
+			height: 300px;
+			padding: 10px;
+			font-family: 'Microsoft Yahei';
+		}
+
+		#status {
+			color: red;
+		}
+
+		.btn {
+			display: inline-block;
+			border-radius: 4px;
+			background-color: #f4511e;
+			border: none;
+			color: #FFFFFF;
+			text-align: center;
+			font-size: 10px;
+			padding: 2px;
+			/* width: 200px; */
+			transition: all 0.5s;
+			cursor: pointer;
+			margin: 5px;
+		}
 	</style>
 	<title>插件配置页</title>
 </head>
+
 <body>
 	<div>
 		<!-- 大选项 -->
@@ -20,19 +45,19 @@
 	</div>
 	<div>
 		<!-- 小选项 -->
-		<label><input type="checkbox" id="show_image"/>img</label>
-		<label><input type="checkbox" id="show_btn"/>btn</label>
-		<label><input type="checkbox" id="show_lab"/>label</label>
-		<label><input type="checkbox" id="show_line"/>线</label>
+		<label><input type="checkbox" id="show_image" />img</label>
+		<label><input type="checkbox" id="show_btn" />btn</label>
+		<label><input type="checkbox" id="show_lab" />label</label>
+		<label><input type="checkbox" id="show_line" />线</label>
 
 	</div>
-	<a href="javascript:;" id="save">保存配置</a>
-	<a href="javascript:;" id="copyCode">复制代码</a>
+	<div class="btn" id="save">保存配置</div>
+	<div class="btn" id="copyCode">复制代码</div>
 
 	<div id="status"></div>
-    <div id='message' style= 'font-size: 10px;'>加载中....</div>
+	<div id='message' style='font-size: 10px;'>加载中....</div>
 
 	<script src="popup.js"></script>
 </body>
-</html>
 
+</html>
