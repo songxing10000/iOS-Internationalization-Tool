@@ -46,6 +46,7 @@ function DOMtoString(document_root) {
                     willTranslateStr += desStr + '\n';
                 }
             }
+            
         } 
         /// 翻译后的字符串 ,如  Daily trend chart
         var translatedStr = ''
@@ -69,7 +70,7 @@ function DOMtoString(document_root) {
                     translatedStr += desStr + '\n';
                 }
             }
-
+            
         }
         
         // return  willTranslateStr + '\n' +  translatedStr;
@@ -95,6 +96,7 @@ function DOMtoString(document_root) {
                 let translated = upperCaseFirstLetter(translatedArray[index]);
                 dict[willTranslate]=translated.replace(',', '');
             }
+            
             return dict
     }
     // else if (loadUrl.includes('222.128.2.40:11199')) {
