@@ -31,7 +31,7 @@ function DOMtoString(document_root) {
             for (let index = 0; index < divs.length; index++) {
                 let div = divs[index]
                 let lang = div.getAttribute("lang")
-                if (lang === "zh-CN") {
+                if (lang === "zh-CN" && div.innerText != "...") {
                     willTranslateStr = div.innerText
                     break;
                 }
