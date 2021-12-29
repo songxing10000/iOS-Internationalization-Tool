@@ -27,15 +27,23 @@ function DOMtoString(document_root) {
         var willTranslateStr = '';
         if (loadUrl.includes('translate.google.cn')) {
             // 谷歌翻译
-            let desDiv = document.getElementsByClassName('text-dummy')
-            if (desDiv.length > 0) {
-                willTranslateStr = desDiv[0].innerHTML
-            } else {
-                willTranslateStr = document.getElementsByClassName('hlJJmd')[0].textContent
+            let divs = document.getElementsByTagName("div");
+            for (let index = 0; index < divs.length; index++) {
+                let div = divs[index]
+                let lang = div.getAttribute("lang")
+                if (lang === "zh-CN") {
+                    willTranslateStr = div.innerText
+                    break;
+                }
             }
-           
-
-            
+            if (willTranslateStr.length <= 0) {
+                let desDiv = document.getElementsByClassName('text-dummy')
+                if (desDiv.length > 0) {
+                    willTranslateStr = desDiv[0].innerHTML
+                } else {
+                    willTranslateStr = document.getElementsByClassName('hlJJmd')[0].textContent
+                }
+            }
         } else if (loadUrl.includes('fanyi.baidu.com')) {
             // 百度翻译
             // document.getElementsByClassName('ordinary-output source-output')[1].innerText
@@ -46,18 +54,30 @@ function DOMtoString(document_root) {
                     willTranslateStr += desStr + '\n';
                 }
             }
-            
-        } 
+
+        }
         /// 翻译后的字符串 ,如  Daily trend chart
         var translatedStr = ''
         if (loadUrl.includes('translate.google.cn')) {
             // 谷歌翻译
-            let desDiv = document.getElementsByClassName('tlid-translation translation')
-            if (desDiv.length > 0) {
-                translatedStr = desDiv[0].innerText
-            } else {
-                translatedStr = document.getElementsByTagName('span')[87].innerText
+            let divs = document.getElementsByTagName("div");
+            for (let index = 0; index < divs.length; index++) {
+                let div = divs[index]
+                let lang = div.getAttribute("lang")
+                if (lang === "en") {
+                    translatedStr = div.innerText
+                    break;
+                }
             }
+            if (translatedStr.length <= 0) {
+                let desDiv = document.getElementsByClassName('tlid-translation translation')
+                if (desDiv.length > 0) {
+                    translatedStr = desDiv[0].innerText
+                } else {
+                    translatedStr = document.getElementsByTagName('span')[87].innerText
+                }
+            }
+
 
         } else if (loadUrl.includes('fanyi.baidu.com')) {
             // 百度翻译
@@ -70,34 +90,34 @@ function DOMtoString(document_root) {
                     translatedStr += desStr + '\n';
                 }
             }
-            
-        }
-        
-        // return  willTranslateStr + '\n' +  translatedStr;
-            // 多个单词 如，Daily trend chart, monthly trend chart
-            let willTranslateArray = willTranslateStr.split("\n")
-            //translatedArray有道翻译后是这样的         Today,,,Tomorrow,
-            // if (translatedStr.includes(",")) {
-            // 可能是有道翻译
-            // //去除换行 https://www.cnblogs.com/konghou/p/3819029.html
-            // translatedStr = translatedStr.replace(/<\/?.+?>/g, "");
-            // translatedStr = translatedStr.replace(/[\r\n]/g, "");
-            // translatedStr = translatedStr.replace(',', "\n");
-            // }
-            let translatedArray = translatedStr.split("\n")
-            willTranslateArray = willTranslateArray.filter(item => item != '')
 
-            // translatedArray有可能是     day,,Late at night
-            translatedArray = translatedArray.filter(item => item != '')
-            let dict = {};
-            for (let index = 0; index < willTranslateArray.length; index++) {
-                const willTranslate = willTranslateArray[index];
-                /// 国际化，第一个单词一定要大写
-                let translated = upperCaseFirstLetter(translatedArray[index]);
-                dict[willTranslate]=translated.replace(',', '');
-            }
-            
-            return dict
+        }
+
+        // return  willTranslateStr + '\n' +  translatedStr;
+        // 多个单词 如，Daily trend chart, monthly trend chart
+        let willTranslateArray = willTranslateStr.split("\n")
+        //translatedArray有道翻译后是这样的         Today,,,Tomorrow,
+        // if (translatedStr.includes(",")) {
+        // 可能是有道翻译
+        // //去除换行 https://www.cnblogs.com/konghou/p/3819029.html
+        // translatedStr = translatedStr.replace(/<\/?.+?>/g, "");
+        // translatedStr = translatedStr.replace(/[\r\n]/g, "");
+        // translatedStr = translatedStr.replace(',', "\n");
+        // }
+        let translatedArray = translatedStr.split("\n")
+        willTranslateArray = willTranslateArray.filter(item => item != '')
+
+        // translatedArray有可能是     day,,Late at night
+        translatedArray = translatedArray.filter(item => item != '')
+        let dict = {};
+        for (let index = 0; index < willTranslateArray.length; index++) {
+            const willTranslate = willTranslateArray[index];
+            /// 国际化，第一个单词一定要大写
+            let translated = upperCaseFirstLetter(translatedArray[index]);
+            dict[willTranslate] = translated.replace(',', '');
+        }
+
+        return dict
     }
     // else if (loadUrl.includes('222.128.2.40:11199')) {
     //     let loginBtns = document.getElementsByClassName('btn');
@@ -121,10 +141,10 @@ function DOMtoString(document_root) {
         if (alphaStrs.length == 12) {
             // 有圆角
             let cornerObj = alphaStrs[13];
-            if (typeof(cornerObj) != "undefined" && cornerObj.includes('pt')) {
+            if (typeof (cornerObj) != "undefined" && cornerObj.includes('pt')) {
                 cornerStr = cornerObj.replace('pt', '');
             }
-            
+
             if (UIAppearStrs.length == 14) {
                 // uiview
                 let bgColor = UIAppearStrs[1];
@@ -132,7 +152,7 @@ function DOMtoString(document_root) {
                 let bgColorAlpha = UIAppearStrs[2];
                 if (bgColorAlpha !== '100%') {
                     bgColorAlpha = '0.' + bgColorAlpha.replace('0%', '');
-                    
+
                     return ['', '', '', bgColor, cornerStr]
                 }
                 // 字 字体 字号 字色 圆角
@@ -145,7 +165,7 @@ function DOMtoString(document_root) {
                 let borderColorAlpha = UIAppearStrs[5];
                 if (borderColorAlpha !== '100%') {
                     borderColorAlpha = '0.' + bgColorAlpha.replace('0%', '');
-                   
+
                     return 'view.layer.backgroundColor = [[UIColor colorWithHexString: @\"' + borderColor + '\"] colorWithAlphaComponent: ' + borderColorAlpha + '].CGColor;\n' +
                         'view.layer.borderWidth = ' + borderWidth + ';\n' +
                         'view.layer.cornerRadius = ' + cornerStr + ';';
@@ -184,7 +204,7 @@ function DOMtoString(document_root) {
         }
         alert(LabTextColorHexStr)
         if (LabTextColorHexStr === '' || !LabTextColorHexStr.startsWith("#")) {
-            
+
             if (typeof (document.getElementsByClassName('mu-dropDown-menu-text-overflow')[1]) != "undefined") {
                 if (document.getElementsByClassName('mu-dropDown-menu-text-overflow')[1].innerText === 'PNG') {
                     return '\
@@ -200,8 +220,8 @@ function DOMtoString(document_root) {
                     // 这里是啥
                 }
             }
-            
-            if(LabTextColorHexStr.includes('RGB')) {
+
+            if (LabTextColorHexStr.includes('RGB')) {
                 // RGBA233, 236, 245, 1 转换 十六进制
                 // #E9ECF5
                 LabTextColorHexStr = document.getElementsByClassName('color_hex')[0].innerText
@@ -217,10 +237,10 @@ function DOMtoString(document_root) {
         if (typeof (fontSizeStrObj) != "undefined") {
             labFontSizeStr = fontSizeStrObj.replace('pt', '');
             let labStr2 = '';
-            if(UIAppearStrs[29] != "undefined") {
+            if (UIAppearStrs[29] != "undefined") {
                 labStr2 = UIAppearStrs[29].replace('\n', '');
             }
-                
+
 
             if (labStr2.length > labStr.length) {
                 // 有富文本
@@ -232,11 +252,11 @@ function DOMtoString(document_root) {
         if (labFontWeightStr === 'Regular') {
             // 粗体
             ocFontMethodName = 'pFSize';
-        } 
+        }
         else if (labFontWeightStr === 'Medium') {
             // 中体
             ocFontMethodName = 'pFMediumSize';
-        } 
+        }
         else if (labFontWeightStr === 'Bold') {
             // 粗体
             ocFontMethodName = 'pFBlodSize';
@@ -245,13 +265,13 @@ function DOMtoString(document_root) {
             // 使用系统默认的字体
             ocFontMethodName = 'systemFontOfSize';
         }
-        return  [labStr, ocFontMethodName, labFontSizeStr, LabTextColorHexStr];
-        
+        return [labStr, ocFontMethodName, labFontSizeStr, LabTextColorHexStr];
+
     }
     else if (loadUrl.includes('zentao/bug')) {
         var bugTitle = document.getElementsByClassName('text')[0].innerText
         let strs = bugTitle.split('】')
-        if(strs.length > 1) {
+        if (strs.length > 1) {
             bugTitle = strs[1]
         } else {
             bugTitle = strs[0]
@@ -275,7 +295,7 @@ function DOMtoString(document_root) {
         document.getElementById('merge_request_title').value = des;
         document.getElementById('merge_request_description').value = des;
         return ''
-    } 
+    }
     else if (loadUrl.includes('csdn')) {
         // 移除csdn登录二维码
         document.getElementsByClassName('login-mark')[0].remove()
@@ -294,7 +314,7 @@ function DOMtoString(document_root) {
         let apiDes = apiStrs[0]
         let apiMethod = apiStrs[1]
         let apiUrl = apiStrs[2]
-        if(apiUrl === " 调试") {
+        if (apiUrl === " 调试") {
             // 没有标题下的接口说明
             apiDes = document.getElementsByClassName('article-head')[0].innerText
             apiMethod = apiStrs[0]
@@ -306,35 +326,35 @@ function DOMtoString(document_root) {
         let paramDesStr = ''
         let paramMethodStr = ''
 
-        if (typeof(paramView) != "undefined") {
+        if (typeof (paramView) != "undefined") {
             let strs = paramView.innerText.split('	')
-            strs.forEach(function(obj, index)  {
+            strs.forEach(function (obj, index) {
                 if (index % 2 == 0 && obj.length > 0) {
                     // 参数字符串
                     // 移除所有换行 .replace(/[\n]/ig,'')
-                    
-                    let rightVar = obj.replace('\nstring','').replace(/[\n]/ig,'')
-                    
-                    
+
+                    let rightVar = obj.replace('\nstring', '').replace(/[\n]/ig, '')
+
+
                     // 尾部 int 如 yidint
                     let lastThreeStr = rightVar.substring(rightVar.length - 3)
-                    if(lastThreeStr === 'int') {
+                    if (lastThreeStr === 'int') {
                         rightVar = rightVar.replace('int', '')
-                        paramMethodStr += rightVar + ':(NSInteger)'+rightVar+'\n'
+                        paramMethodStr += rightVar + ':(NSInteger)' + rightVar + '\n'
                         paramStr += 'dict[varNameToStr(' + rightVar + ')] = @(' + rightVar + ');\n'
                         paramDesStr += '\n/// @param ' + rightVar
                     } else {
-                        paramMethodStr += rightVar + ':(NSString *)'+rightVar+'\n'
+                        paramMethodStr += rightVar + ':(NSString *)' + rightVar + '\n'
                         paramStr += 'dict[varNameToStr(' + rightVar + ')] = ' + rightVar + ';\n'
                         paramDesStr += '\n/// @param ' + rightVar
                     }
-                    
+
                 }
             });
         }
         let dictValue = 'nil'
         if (paramStr.length > 0) {
-            paramStr = '\nNSMutableDictionary *dict = [NSMutableDictionary dictionary];\n'+paramStr
+            paramStr = '\nNSMutableDictionary *dict = [NSMutableDictionary dictionary];\n' + paramStr
             dictValue = 'dict'
         }
         let methodStr = apiMethod === 'GET' ? 'get' : 'post'
