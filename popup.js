@@ -274,7 +274,7 @@ function translate(willTranslateStr, translatedStr, outTypeStr, isSwift) {
       -(UIButton *)m_${translatedStr}Btn {
         if (!_m_${translatedStr}Btn) {
     UIButton *btn = [UIButton buttonWithType: UIButtonTypeCustom];
-        [btn setTitle: @"观看直播" forState: UIControlStateNormal];
+        [btn setTitle: @"${willTranslateStr}" forState: UIControlStateNormal];
         btn.titleLabel.font = [UIFont pFSize: 12];
         UIColor *color = @"#9A2037".hexColor;
         [btn setTitleColor:color  forState: UIControlStateNormal];
