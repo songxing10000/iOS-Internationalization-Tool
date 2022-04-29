@@ -251,19 +251,14 @@ function translate(willTranslateStr, translatedStr, outTypeStr, isSwift) {
   if (outTypeStr === 'str') {
     return "/// " + willTranslateStr + "\n" + "NSString *" + translatedStr + "Str" + " = @\"" + willTranslateStr + "\";"
   } else if (outTypeStr === 'label') {
+    if(isSwift) {
+      return `/// ${willTranslateStr}
+      var m_${translatedStr}Label: UILabel?
+      `
+    }
     return `/// ${willTranslateStr} 
     @property (nonatomic, strong) UILabel *m_${translatedStr}Lab;
     
-    -(UILabel *)m_${translatedStr}Lab {
-      if (!_m_${translatedStr}Lab) {
-          UILabel *lab = [UILabel new];
-        lab.text = @"0点限时买一送一！";
-        lab.font = [UIFont pFMediumSize: 16];
-        lab.textColor = @"#333333".hexColor;
-        _m_${translatedStr}Lab = lab;
-      }
-      return _m_${translatedStr}Lab;
-    }
     `
   } else if (outTypeStr === 'btn') {
     let controlName = upperCaseFirstLetter(translatedStr);
@@ -271,18 +266,7 @@ function translate(willTranslateStr, translatedStr, outTypeStr, isSwift) {
       return `/// ${willTranslateStr}
       @property (nonatomic, strong) UIButton *m_${translatedStr}Btn;
 
-      -(UIButton *)m_${translatedStr}Btn {
-        if (!_m_${translatedStr}Btn) {
-    UIButton *btn = [UIButton buttonWithType: UIButtonTypeCustom];
-        [btn setTitle: @"${willTranslateStr}" forState: UIControlStateNormal];
-        btn.titleLabel.font = [UIFont pFSize: 12];
-        UIColor *color = @"#9A2037".hexColor;
-        [btn setTitleColor:color  forState: UIControlStateNormal];
-        [btn addTarget:self action:@selector(click${controlName}Btn:) forControlEvents:UIControlEventTouchUpInside];
-        _m_${translatedStr}Btn = btn;
-        }
-        return _m_${translatedStr}Btn;
-    }
+      [btn addTarget:self action:@selector(click${controlName}Btn:) forControlEvents:UIControlEventTouchUpInside];
       
       // MARK: - ${willTranslateStr} 按钮事件
       /// ${willTranslateStr} 按钮事件
@@ -290,14 +274,36 @@ function translate(willTranslateStr, translatedStr, outTypeStr, isSwift) {
 
       }`
     }
-    return "\n/// " + willTranslateStr + "\n" + "var m_" + translatedStr + "Label: UILabel!" +
-      "\n/// " + willTranslateStr + "\n" + "var m_" + translatedStr + "Btn: UIButton!" +
-      "\n\nm_" + translatedStr + "Btn.addTarget(self, action: #selector(on" + controlName + "BtnClick(btn:)), for: .touchUpInside)" +
-      "\n// MARK: - " + willTranslateStr + " 按钮事件" +
-      "\n/// " + willTranslateStr + " 按钮事件" +
-      "\nfunc on" + controlName + "BtnClick(btn: UIButton) {" +
-      "\n\n" +
-      "}"
+    return `/// ${willTranslateStr} 
+    var m_${translatedStr}Btn: UIButton! 
+
+    m_${translatedStr}Btn.addTarget(self, action: #selector(on${controlName}BtnClick(btn:)), for: .touchUpInside)
+    
+// MARK: - ${willTranslateStr}  按钮事件
+/// ${willTranslateStr} 按钮事件
+func on${controlName}BtnClick(btn: UIButton) { 
+
+}`
+  }
+  else if (outTypeStr === 'line') {
+    if(isSwift) {
+      return `/// ${willTranslateStr}
+      var m_${translatedStr}Line: UIView?
+      `
+    }
+    return `/// ${willTranslateStr}
+    @property (nonatomic, strong) UIView *m_${translatedStr}Line;
+    `
+  }
+  else if (outTypeStr === 'img') {
+    if(isSwift) {
+      return `/// ${willTranslateStr}
+      var m_${translatedStr}ImgV: UIImageView?
+      `
+    }
+    return `/// ${willTranslateStr}
+    @property (nonatomic, strong) UIImageView *m_${translatedStr}ImgV;
+    `
   }
   return "/// " + willTranslateStr + "\n" + "NSString *" + translatedStr + "Str" + " = @\"" + willTranslateStr + "\";"
 }
