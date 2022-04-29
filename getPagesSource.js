@@ -25,6 +25,8 @@ function DOMtoString(document_root) {
         /// 谷歌翻译处理
         /// 待翻译的字符串
         var willTranslateStr = '';
+        /// 翻译后的字符串 ,如  Daily trend chart
+        var translatedStr = ''
         if (loadUrl.includes('translate.google.cn')) {
             // 谷歌翻译
             let divs = document.getElementsByTagName("div");
@@ -33,6 +35,10 @@ function DOMtoString(document_root) {
                 let lang = div.getAttribute("lang")
                 if (lang === "zh-CN" && div.innerText != "...") {
                     willTranslateStr = div.innerText
+                    break;
+                }
+                if (lang === "en") {
+                    translatedStr = div.innerText
                     break;
                 }
             }
@@ -44,31 +50,7 @@ function DOMtoString(document_root) {
                     willTranslateStr = document.getElementsByClassName('hlJJmd')[0].textContent
                 }
             }
-        } else if (loadUrl.includes('fanyi.baidu.com')) {
-            // 百度翻译
-            // document.getElementsByClassName('ordinary-output source-output')[1].innerText
-            let willTranslateArr = document.getElementsByClassName("ordinary-output source-output");
-            for (let index = 0; index < willTranslateArr.length; index++) {
-                let desStr = willTranslateArr[index].innerText;
-                if (desStr.length > 0) {
-                    willTranslateStr += desStr + '\n';
-                }
-            }
-
-        }
-        /// 翻译后的字符串 ,如  Daily trend chart
-        var translatedStr = ''
-        if (loadUrl.includes('translate.google.cn')) {
-            // 谷歌翻译
-            let divs = document.getElementsByTagName("div");
-            for (let index = 0; index < divs.length; index++) {
-                let div = divs[index]
-                let lang = div.getAttribute("lang")
-                if (lang === "en") {
-                    translatedStr = div.innerText
-                    break;
-                }
-            }
+            
             if (translatedStr.length <= 0) {
                 let desDiv = document.getElementsByClassName('tlid-translation translation')
                 if (desDiv.length > 0) {
@@ -77,11 +59,16 @@ function DOMtoString(document_root) {
                     translatedStr = document.getElementsByTagName('span')[87].innerText
                 }
             }
-
-
-        } else if (loadUrl.includes('fanyi.baidu.com')) {
+        } 
+        else if (loadUrl.includes('fanyi.baidu.com')) {
             // 百度翻译
-            // document.getElementsByClassName('ordinary-output target-output clearfix')[1].innerText
+            let willTranslateArr = document.getElementsByClassName("ordinary-output source-output");
+            for (let index = 0; index < willTranslateArr.length; index++) {
+                let desStr = willTranslateArr[index].innerText;
+                if (desStr.length > 0) {
+                    willTranslateStr += desStr + '\n';
+                }
+            }
             let translatedArr = document.getElementsByClassName("ordinary-output target-output clearfix");
             for (let index = 0; index < translatedArr.length; index++) {
                 let desStr = translatedArr[index].innerText;
@@ -90,8 +77,8 @@ function DOMtoString(document_root) {
                     translatedStr += desStr + '\n';
                 }
             }
-
         }
+         
 
         // return  willTranslateStr + '\n' +  translatedStr;
         // 多个单词 如，Daily trend chart, monthly trend chart
@@ -118,155 +105,6 @@ function DOMtoString(document_root) {
         }
 
         return dict
-    }
-    // else if (loadUrl.includes('222.128.2.40:11199')) {
-    //     let loginBtns = document.getElementsByClassName('btn');
-    //     if (loginBtns.length > 0) {
-    //         loginBtns[0].click();
-    //     } else {
-    //         document.getElementById('svpn_name').value = 'songxing';
-    //         document.getElementById('svpn_password').value = 'hp?PGUKgj?rE';
-    //         document.getElementById('logButton').click();
-    //     }
-    // }
-
-    else if (loadUrl.includes('lanhuapp.com/web')) {
-        // 蓝湖
-        let alphaStrs = document.getElementsByClassName('annotation_item')[0].innerText.split('\n');
-        // UI外观
-        let UIAppearStrs = document.getElementsByClassName('annotation_item')[1].innerText.split('\n');
-        // 代码 
-        let objcCodeStrs = document.getElementsByClassName('annotation_item')[2].innerText;
-        let cornerStr = '';
-        if (alphaStrs.length == 12) {
-            // 有圆角
-            let cornerObj = alphaStrs[13];
-            if (typeof (cornerObj) != "undefined" && cornerObj.includes('pt')) {
-                cornerStr = cornerObj.replace('pt', '');
-            }
-
-            if (UIAppearStrs.length == 14) {
-                // uiview
-                let bgColor = UIAppearStrs[1];
-                // 10%
-                let bgColorAlpha = UIAppearStrs[2];
-                if (bgColorAlpha !== '100%') {
-                    bgColorAlpha = '0.' + bgColorAlpha.replace('0%', '');
-
-                    return ['', '', '', bgColor, cornerStr]
-                }
-                // 字 字体 字号 字色 圆角
-                return ['', '', '', bgColor, cornerStr]
-            } else if (UIAppearStrs.length == 17) {
-                // 按钮边框
-                let borderWidth = UIAppearStrs[2].replace('pt', '');
-                let borderColor = UIAppearStrs[4];
-                // 10%
-                let borderColorAlpha = UIAppearStrs[5];
-                if (borderColorAlpha !== '100%') {
-                    borderColorAlpha = '0.' + bgColorAlpha.replace('0%', '');
-
-                    return 'view.layer.backgroundColor = [[UIColor colorWithHexString: @\"' + borderColor + '\"] colorWithAlphaComponent: ' + borderColorAlpha + '].CGColor;\n' +
-                        'view.layer.borderWidth = ' + borderWidth + ';\n' +
-                        'view.layer.cornerRadius = ' + cornerStr + ';';
-                }
-                return 'view.layer.borderColor = [UIColor colorWithHexString: @\"' + borderColor + '\"].CGColor;\n' +
-                    'view.layer.borderWidth = ' + borderWidth + ';\n' +
-                    'view.layer.cornerRadius = ' + cornerStr + ';';
-            }
-        }
-
-        // 位置面板中的透明度 
-        let alphaStr = '';
-        if (typeof (alphaStrs[9]) != "undefined") {
-            if (alphaStrs[9] !== '100%') {
-                // 需求设置透明度 一般是 60% 30%
-                alphaStr = '0.' + alphaStrs[9].replace('0%', '');
-            }
-        }
-        if (alphaStrs.length <= 0) {
-            return '未选中控件'
-        }
-        // 位置面板中的 label 文字
-        var labStr = alphaStrs[1].replace('\n', '');;
-
-
-
-        // "苹方-简 中黑体"
-        let labFontStr = UIAppearStrs[1];
-        // Medium
-        let labFontWeightStr = UIAppearStrs[3];
-        let LabTextColorHexStr = '';
-        let textColorStrObj = UIAppearStrs[11];
-        if (typeof (textColorStrObj) != "undefined") {
-
-            LabTextColorHexStr = textColorStrObj.replace('HEX', '');
-        }
-        alert(LabTextColorHexStr)
-        if (LabTextColorHexStr === '' || !LabTextColorHexStr.startsWith("#")) {
-
-            if (typeof (document.getElementsByClassName('mu-dropDown-menu-text-overflow')[1]) != "undefined") {
-                if (document.getElementsByClassName('mu-dropDown-menu-text-overflow')[1].innerText === 'PNG') {
-                    return '\
-                    UIImage *img = [UIImage imageNamed: [NSString homeFastBuyIcon]];\n\
-                    UIImageView *imgV = [[UIImageView alloc] initWithImage:img];\n\
-                    [self.view addSubview: imgV];\n\
-                    [imgV sizeToFit];\n\
-                    imgV.right = 16;\n\
-                    imgV.top = 16;\n\
-                    ';
-
-                } else {
-                    // 这里是啥
-                }
-            }
-
-            if (LabTextColorHexStr.includes('RGB')) {
-                // RGBA233, 236, 245, 1 转换 十六进制
-                // #E9ECF5
-                LabTextColorHexStr = document.getElementsByClassName('color_hex')[0].innerText
-                // 100%
-                // let colorAlphaStr = pdocument.getElementsByClassName('color_opacity')[0].innerText
-                alert(LabTextColorHexStr)
-            }
-        }
-        alert(LabTextColorHexStr)
-
-        let labFontSizeStr = '12';
-        let fontSizeStrObj = UIAppearStrs[22];
-        if (typeof (fontSizeStrObj) != "undefined") {
-            labFontSizeStr = fontSizeStrObj.replace('pt', '');
-            let labStr2 = '';
-            if (UIAppearStrs[29] != "undefined") {
-                labStr2 = UIAppearStrs[29].replace('\n', '');
-            }
-
-
-            if (labStr2.length > labStr.length) {
-                // 有富文本
-                labStr = labStr2;
-            }
-        }
-        //  Medium Bold
-        let ocFontMethodName = 'pFSize';
-        if (labFontWeightStr === 'Regular') {
-            // 粗体
-            ocFontMethodName = 'pFSize';
-        }
-        else if (labFontWeightStr === 'Medium') {
-            // 中体
-            ocFontMethodName = 'pFMediumSize';
-        }
-        else if (labFontWeightStr === 'Bold') {
-            // 粗体
-            ocFontMethodName = 'pFBlodSize';
-        }
-        else {
-            // 使用系统默认的字体
-            ocFontMethodName = 'systemFontOfSize';
-        }
-        return [labStr, ocFontMethodName, labFontSizeStr, LabTextColorHexStr];
-
     }
     else if (loadUrl.includes('zentao/bug')) {
         var bugTitle = document.getElementsByClassName('text')[0].innerText
