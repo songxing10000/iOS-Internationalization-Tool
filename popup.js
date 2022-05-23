@@ -7,6 +7,9 @@ let lab = document.getElementById('show_lab');
 document.getElementById('show_line');
 */
 let showLine = document.getElementById('show_line');
+/// 通知
+let show_note = document.getElementById('show_note');
+
 // 监听来消息 getSource
 chrome.runtime.onMessage.addListener(function (request, sender) {
   if (request.action == "getSource") {
@@ -23,7 +26,7 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
         message.innerText = str;
       }
       else if (op === 'oc_code' || op === 'swift_code') {
-        
+ 
         if (btn.checked) {
           let str2 = '';
           for (const [key, value] of Object.entries(request.source)) {
@@ -46,10 +49,18 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
             str2 += translate(key, value.replace(',', ''), 'line', (op === 'swift_code')) + '\n';
           }
           message.innerText = str2;
-        } else if (img.checked){
+        } 
+        else if (img.checked){
           let str2 = '';
           for (const [key, value] of Object.entries(request.source)) {
             str2 += translate(key, value.replace(',', ''), 'img', (op === 'swift_code')) + '\n';
+          }
+          message.innerText = str2;
+        }
+        else if (show_note.checked){
+          let str2 = '';
+          for (const [key, value] of Object.entries(request.source)) {
+            str2 += translate(key, value.replace(',', ''), 'note', (op === 'swift_code')) + '\n';
           }
           message.innerText = str2;
         }
@@ -154,6 +165,9 @@ document.addEventListener('DOMContentLoaded', function () {
       lab.checked = true;
     }  else if (ocCodeStr === 'line') {
       showLine.checked = true;
+    } else if (ocCodeStr === 'note') {
+      // 回显
+      show_note.checked = true;
     }
   });
 });
@@ -191,7 +205,10 @@ document.getElementById('save').addEventListener('click', function () {
   else if (showLine.checked) {
     ocCodeStr = 'line';
   }
-  let showImage = img.checked;
+  else if (show_note.checked) {
+    ocCodeStr = 'note';
+  }
+   
   let saveDict = {
     op: op,
     ocCode: ocCodeStr
@@ -208,21 +225,31 @@ img.addEventListener('change', function () {
   btn.checked = false;
   lab.checked = false;
   showLine.checked = false;
+  show_note.checked = false;
 });
 document.getElementById('show_btn').addEventListener('change', function () {
   img.checked = false;
   lab.checked = false;
   showLine.checked = false;
+  show_note.checked = false;
 });
 document.getElementById('show_lab').addEventListener('change', function () {
   img.checked = false;
   btn.checked = false;
   showLine.checked = false;
+  show_note.checked = false;
 });
 document.getElementById('show_line').addEventListener('change', function () {
   img.checked = false;
   btn.checked = false;
   lab.checked = false;
+  show_note.checked = false;
+});
+document.getElementById('show_note').addEventListener('change', function () {
+  img.checked = false;
+  btn.checked = false;
+  lab.checked = false;
+  showLine.checked = false;
 });
 /// 处理一个单词 ，str 定义自符串，label 定义连线label
 function translate(willTranslateStr, translatedStr, outTypeStr, isSwift) {
@@ -263,17 +290,19 @@ function translate(willTranslateStr, translatedStr, outTypeStr, isSwift) {
   } else if (outTypeStr === 'btn') {
     let controlName = upperCaseFirstLetter(translatedStr);
     if (!isSwift) {
-      return `/// ${willTranslateStr}
-      @property (nonatomic, strong) UIButton *m_${translatedStr}Btn;
+      return `
+  /// ${willTranslateStr}
+  @property (nonatomic, strong) UIButton *m_${translatedStr}Btn;
 
-      [btn addTarget:self action:@selector(click${controlName}Btn:) forControlEvents:UIControlEventTouchUpInside];
-      
-      // MARK: - ${willTranslateStr} 按钮事件
-      /// ${willTranslateStr} 按钮事件
-      - (void) click${controlName}Btn:(UIButton *)btn {
+  [btn addTarget:self action:@selector(click${controlName}Btn:) forControlEvents:UIControlEventTouchUpInside];
+  
+  // MARK: - ${willTranslateStr} 按钮事件
+  /// ${willTranslateStr} 按钮事件
+  - (void) click${controlName}Btn:(UIButton *)btn {
 
-      }`
+  }`
     }
+    
     return `/// ${willTranslateStr} 
     var m_${translatedStr}Btn: UIButton! 
 
@@ -305,6 +334,27 @@ func on${controlName}BtnClick(btn: UIButton) {
     @property (nonatomic, strong) UIImageView *m_${translatedStr}ImgV;
     `
   }
+  else if (outTypeStr === 'note') {
+    if(isSwift) {
+      return `/// ${willTranslateStr}
+      var m_${translatedStr}ImgV: UIImageView?
+      `
+    }
+    return `\n
+    /// ${willTranslateStr} 通知
+    NSString *k${upperCaseFirstLetter(translatedStr)}Note = @"k${upperCaseFirstLetter(translatedStr)}Note";
+     
+    // 监听 ${willTranslateStr} 通知
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+    \t\t\tselector:@selector(didReceived${upperCaseFirstLetter(translatedStr)}Noti:) 
+    \t\t\tname:k${upperCaseFirstLetter(translatedStr)}Note 
+    \t\t\t  object:nil];
+    
+      // 收到 ${willTranslateStr} 通知
+    - (void)didReceived${upperCaseFirstLetter(translatedStr)}Noti:(NSNotification *)note {
+    
+    }
+    `}
   return "/// " + willTranslateStr + "\n" + "NSString *" + translatedStr + "Str" + " = @\"" + willTranslateStr + "\";"
 }
 /**
