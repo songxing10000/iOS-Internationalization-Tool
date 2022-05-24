@@ -8,6 +8,19 @@ function upperCaseFirstLetter(str) {
 
 }
 /**
+ * obj是不是undefined
+ * @param {any} obj 
+ */
+function isNotUndefine(obj) {
+    if (typeof (obj) != "undefined") {
+        return true
+    }
+    return false
+}
+
+
+
+/**
  * 只把首字母进行小写，其余字字符串不改变之前的大小写样式
  * @param {string} str 
  */
@@ -50,7 +63,7 @@ function DOMtoString(document_root) {
                     willTranslateStr = document.getElementsByClassName('hlJJmd')[0].textContent
                 }
             }
-            
+
             if (translatedStr.length <= 0) {
                 let desDiv = document.getElementsByClassName('tlid-translation translation')
                 if (desDiv.length > 0) {
@@ -59,7 +72,7 @@ function DOMtoString(document_root) {
                     translatedStr = document.getElementsByTagName('span')[87].innerText
                 }
             }
-        } 
+        }
         else if (loadUrl.includes('fanyi.baidu.com')) {
             // 百度翻译
             let willTranslateArr = document.getElementsByClassName("ordinary-output source-output");
@@ -78,7 +91,7 @@ function DOMtoString(document_root) {
                 }
             }
         }
-         
+
 
         // return  willTranslateStr + '\n' +  translatedStr;
         // 多个单词 如，Daily trend chart, monthly trend chart
@@ -316,6 +329,47 @@ function DOMtoString(document_root) {
         } else {
             returnStr += '[self requestUrlStr:urlStr dict:muDict method:MARequestMethodGET success:success failure:failure];\n}'
         }
+        // 取最后个table就是接口返回的字段说明
+        let tables = document.getElementsByTagName('table')
+        if (isNotUndefine(tables) && tables.length >= 1) {
+            // 参数名	示例值	参数类型	参数描述
+
+            let lastTable = tables[tables.length - 1]
+            // HTMLCollection for
+            for (let row of lastTable.rows) {
+                /// result.storeList.cartItems.isDeleted
+                let name = row.cells[0].innerText;
+                // arr.pop()  弹出数组最后个元素，之前的数组会被改变
+                let proNameStr = name.includes('.') ? name.split('.').pop() : name
+                let exampleStr = row.cells[1].innerText;
+                let typeStr = row.cells[2].innerText;
+                let desStr = row.cells[3].innerText;
+                let exampleShowStr = exampleStr === '-' ? "" : `，示例值：${exampleStr}`
+                if (typeStr === 'Number') {
+                    returnStr += `
+/// ${desStr}${exampleShowStr}
+@property (nonatomic, strong) NSNumber *${proNameStr};
+`
+                }
+                else if (typeStr === 'String') {
+                    returnStr += `
+/// ${desStr}，示例值：${exampleShowStr}
+@property (nonatomic, copy) NSString *${proNameStr};
+`
+                }
+                else if (typeStr === 'Object') {
+                    // Object可能是数组，可能是对象，可能是字符串
+                    returnStr += `
+/// ${desStr}，示例值：${exampleShowStr}
+@property (nonatomic, strong) id ${proNameStr};
+`
+                }
+
+                
+            }
+
+        }
+
 
         return returnStr;
 
