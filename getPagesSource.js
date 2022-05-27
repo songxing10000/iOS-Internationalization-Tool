@@ -359,11 +359,21 @@ function DOMtoString(document_root) {
                 }
                 else if (typeStr === 'Object') {
                     // Object可能是数组，可能是对象，可能是字符串
+                    // 这些鸟后台一个数组一会儿用Array 一会儿用Object
                     returnStr += `
 /// ${desStr}，示例值：${exampleShowStr}
 @property (nonatomic, strong) id ${proNameStr};
 `
                 }
+                else if (typeStr === 'Array') {
+                    // 这些鸟后台一个数组一会儿用Array 一会儿用Object
+                     
+                    returnStr += `
+/// ${desStr}，示例值：${exampleShowStr}
+@property (nonatomic, strong) NSArray<NSString *> *${proNameStr};
+`
+                }
+                
 
                 
             }
