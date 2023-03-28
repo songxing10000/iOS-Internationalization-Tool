@@ -9,6 +9,9 @@ document.getElementById('show_line');
 let showLine = document.getElementById('show_line');
 /// 通知
 let show_note = document.getElementById('show_note');
+/// show_IBOutlet
+let show_IBOutlet = document.getElementById('show_IBOutlet');
+
 
 // 监听来消息 getSource
 chrome.runtime.onMessage.addListener(function (request, sender) {
@@ -152,7 +155,7 @@ window.onload = onWindowLoad;
 /// 新加面板
 document.addEventListener('DOMContentLoaded', function () {
   // 默认配置
-  var defaultConfig = { 'op': 'lang', 'ocCode': 'btn' };
+  var defaultConfig = { 'op': 'lang', 'ocCode': 'btn', 'show_IBOutlet': false };
   // 读取数据，第一个参数是指定要读取的key以及设置默认值
   chrome.storage.sync.get(defaultConfig, function (items) {
     document.getElementById('op').value = items.op;
@@ -169,6 +172,9 @@ document.addEventListener('DOMContentLoaded', function () {
       // 回显
       show_note.checked = true;
     }
+
+    show_IBOutlet.checked = items.show_IBOutlet
+    
   });
 });
 // 复制代码事件
@@ -211,8 +217,10 @@ document.getElementById('save').addEventListener('click', function () {
    
   let saveDict = {
     op: op,
-    ocCode: ocCodeStr
+    ocCode: ocCodeStr,
+    show_IBOutlet:show_IBOutlet.checked ? true : false
   };
+  
   chrome.storage.sync.set(saveDict, function () {
     document.getElementById('status').textContent = '保存成功！';
     setTimeout(() => { document.getElementById('status').textContent = ''; }, 800);
@@ -251,6 +259,9 @@ document.getElementById('show_note').addEventListener('change', function () {
   lab.checked = false;
   showLine.checked = false;
 });
+document.getElementById('show_IBOutlet').addEventListener('change', function () {
+   
+});
 /// 处理一个单词 ，str 定义自符串，label 定义连线label
 function translate(willTranslateStr, translatedStr, outTypeStr, isSwift) {
   // 一个单词 如，Daily trend chart
@@ -279,9 +290,11 @@ function translate(willTranslateStr, translatedStr, outTypeStr, isSwift) {
     return "/// " + willTranslateStr + "\n" + "NSString *" + translatedStr + "Str" + " = @\"" + willTranslateStr + "\";"
   } else if (outTypeStr === 'label') {
     if(isSwift) {
-      return `/// ${willTranslateStr}
-      var m_${translatedStr}Label: UILabel?
-      `
+      if (show_IBOutlet.checked) {
+        return `/// ${willTranslateStr}\n@IBOutlet weak var m_${translatedStr}Label: UILabel!`
+
+      } 
+      return `/// ${willTranslateStr}\nvar m_${translatedStr}Label: UILabel?`
     }
     return `/// ${willTranslateStr} 
     @property (nonatomic, strong) UILabel *m_${translatedStr}Lab;
