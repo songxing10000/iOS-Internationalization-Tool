@@ -292,7 +292,6 @@ function translate(willTranslateStr, translatedStr, outTypeStr, isSwift) {
     if(isSwift) {
       if (show_IBOutlet.checked) {
         return `/// ${willTranslateStr}\n@IBOutlet weak var m_${translatedStr}Label: UILabel!`
-
       } 
       return `/// ${willTranslateStr}\nvar m_${translatedStr}Label: UILabel?`
     }
@@ -315,7 +314,18 @@ function translate(willTranslateStr, translatedStr, outTypeStr, isSwift) {
 
   }`
     }
+    if (show_IBOutlet.checked) {
+      return `/// ${willTranslateStr}
+@IBOutlet weak var m_${translatedStr}Btn: UIButton! 
+
+m_${translatedStr}Btn.addTarget(self, action: #selector(on${controlName}BtnClick(btn:)), for: .touchUpInside)
     
+// MARK: - ${willTranslateStr}  按钮事件
+/// ${willTranslateStr} 按钮事件
+func on${controlName}BtnClick(btn: UIButton) { 
+
+}`
+    }
     return `/// ${willTranslateStr} 
     var m_${translatedStr}Btn: UIButton! 
 
@@ -329,9 +339,10 @@ func on${controlName}BtnClick(btn: UIButton) {
   }
   else if (outTypeStr === 'line') {
     if(isSwift) {
-      return `/// ${willTranslateStr}
-      var m_${translatedStr}Line: UIView?
-      `
+      if (show_IBOutlet.checked) {
+        return `/// ${willTranslateStr}\n@IBOutlet weak var m_${translatedStr}Line: UIView!`
+      }
+      return `/// ${willTranslateStr}\nvar m_${translatedStr}Line: UIView?`
     }
     return `/// ${willTranslateStr}
     @property (nonatomic, strong) UIView *m_${translatedStr}Line;
@@ -339,9 +350,10 @@ func on${controlName}BtnClick(btn: UIButton) {
   }
   else if (outTypeStr === 'img') {
     if(isSwift) {
-      return `/// ${willTranslateStr}
-      var m_${translatedStr}ImgV: UIImageView?
-      `
+      if (show_IBOutlet.checked) {
+        return `/// ${willTranslateStr}\n@IBOutlet weak var m_${translatedStr}ImgV: UIImageView!`
+      }
+      return `/// ${willTranslateStr}\nvar m_${translatedStr}ImgV: UIImageView?`
     }
     return `/// ${willTranslateStr}
     @property (nonatomic, strong) UIImageView *m_${translatedStr}ImgV;
