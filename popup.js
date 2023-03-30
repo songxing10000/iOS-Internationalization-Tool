@@ -322,7 +322,7 @@ m_${translatedStr}Btn.addTarget(self, action: #selector(on${controlName}BtnClick
     
 // MARK: - ${willTranslateStr}  按钮事件
 /// ${willTranslateStr} 按钮事件
-func on${controlName}BtnClick(btn: UIButton) { 
+@objc func on${controlName}BtnClick(btn: UIButton) { 
 
 }`
     }
@@ -333,7 +333,7 @@ func on${controlName}BtnClick(btn: UIButton) {
     
 // MARK: - ${willTranslateStr}  按钮事件
 /// ${willTranslateStr} 按钮事件
-func on${controlName}BtnClick(btn: UIButton) { 
+@objc func on${controlName}BtnClick(btn: UIButton) { 
 
 }`
   }
