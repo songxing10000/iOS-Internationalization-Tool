@@ -17,7 +17,7 @@ let show_IBOutlet = document.getElementById('show_IBOutlet');
 chrome.runtime.onMessage.addListener(function (request, sender) {
   if (request.action == "getSource") {
 
-    if (url.includes('translate.google.cn') || url.includes('fanyi.baidu.com')) {
+    if (url.includes('fanyi.youdao.com') || url.includes('fanyi.baidu.com')) {
       
       let op = document.getElementById('op').value;
       if (op === 'lang') {

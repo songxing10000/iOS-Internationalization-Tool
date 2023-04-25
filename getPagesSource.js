@@ -32,67 +32,38 @@ function lowerCaseFirstLetter(str) {
 /// 通过 domcument 拼接相应 字符串
 function DOMtoString(document_root) {
     var loadUrl = document.URL;
-    if (loadUrl.includes('translate.google.cn') ||
-        loadUrl.includes('fanyi.baidu.com')) {
+    if (loadUrl.includes('fanyi.baidu.com') || loadUrl.includes('fanyi.youdao.com') ) {
         /// 考虑  's  Guarantor's vehicle information, guarantor's real estate information
-        /// 谷歌翻译处理
         /// 待翻译的字符串
         var willTranslateStr = '';
         /// 翻译后的字符串 ,如  Daily trend chart
         var translatedStr = ''
-        if (loadUrl.includes('translate.google.cn')) {
-            // 谷歌翻译
-            let divs = document.getElementsByTagName("div");
-            for (let index = 0; index < divs.length; index++) {
-                let div = divs[index]
-                let lang = div.getAttribute("lang")
-                if (lang === "zh-CN" && div.innerText != "...") {
-                    willTranslateStr = div.innerText
-                    break;
-                }
-                if (lang === "en") {
-                    translatedStr = div.innerText
-                    break;
-                }
-            }
-            if (willTranslateStr.length <= 0) {
-                let desDiv = document.getElementsByClassName('text-dummy')
-                if (desDiv.length > 0) {
-                    willTranslateStr = desDiv[0].innerHTML
-                } else {
-                    willTranslateStr = document.getElementsByClassName('hlJJmd')[0].textContent
-                }
-            }
-
-            if (translatedStr.length <= 0) {
-                let desDiv = document.getElementsByClassName('tlid-translation translation')
-                if (desDiv.length > 0) {
-                    translatedStr = desDiv[0].innerText
-                } else {
-                    translatedStr = document.getElementsByTagName('span')[87].innerText
-                }
-            }
-        }
-        else if (loadUrl.includes('fanyi.baidu.com')) {
+        if (loadUrl.includes('fanyi.baidu.com') || loadUrl.includes('fanyi.youdao.com')) {
             // 百度翻译
-            let willTranslateArr = document.getElementsByClassName("ordinary-output source-output");
+            let willTranslateArr = loadUrl.includes('fanyi.baidu.com') ? document.getElementsByClassName("ordinary-output source-output"): [document.getElementById('js_fanyi_input')]
+    
+
             for (let index = 0; index < willTranslateArr.length; index++) {
                 let desStr = willTranslateArr[index].innerText;
                 if (desStr.length > 0) {
                     willTranslateStr += desStr + '\n';
                 }
             }
-            let translatedArr = document.getElementsByClassName("ordinary-output target-output clearfix");
+            
+
+            let translatedArr = loadUrl.includes('fanyi.baidu.com') ? document.getElementsByClassName("ordinary-output target-output clearfix") : [document.getElementById('js_fanyi_output_resultOutput')]
+ 
             for (let index = 0; index < translatedArr.length; index++) {
                 let desStr = translatedArr[index].innerText;
+                
                 if (desStr.length > 0) {
 
                     translatedStr += desStr + '\n';
                 }
             }
+           
         }
-
-
+        
         // return  willTranslateStr + '\n' +  translatedStr;
         // 多个单词 如，Daily trend chart, monthly trend chart
         let willTranslateArray = willTranslateStr.split("\n")
@@ -116,7 +87,6 @@ function DOMtoString(document_root) {
             let translated = upperCaseFirstLetter(translatedArray[index]);
             dict[willTranslate] = translated.replace(',', '');
         }
-
         return dict
     }
     else if (loadUrl.includes('zentao/bug')) {
