@@ -1,10 +1,26 @@
 {
-  "name": "译 iOS国际化工具",
-  "version": "1.0",
   "manifest_version": 2,
-  "description": "谷歌翻译，有道翻译，iOS国际化",
+  "name": "译++",
+  "version": "1.0",
+  "description": "翻译转代码助手",
+  "permissions": [
+    "activeTab",
+    "<all_urls>",
+    "clipboardWrite"
+  ],
   "browser_action": {
+    "default_title": "译++",
     "default_popup": "popup.html"
   },
-  "permissions": ["clipboardWrite","contextMenus", "tabs", "<all_urls>", "storage"]
+  "content_scripts": [
+    {
+      "matches": [
+        "https://fanyi.baidu.com/*",
+        "https://fanyi.youdao.com/*"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ]
 }
