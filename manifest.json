@@ -1,15 +1,15 @@
 {
   "manifest_version": 2,
-  "name": "译++",
+  "name": "际",
   "version": "1.0",
-  "description": "翻译转代码助手",
+  "description": "iOS国际化本地化，处理翻译前后的字符串为特别格式的串",
   "permissions": [
     "activeTab",
     "<all_urls>",
     "clipboardWrite"
   ],
   "browser_action": {
-    "default_title": "译++",
+    "default_title": "际",
     "default_popup": "popup.html"
   },
   "content_scripts": [
